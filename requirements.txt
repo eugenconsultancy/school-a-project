@@ -27,8 +27,8 @@ openpyxl==3.1.2
 # PDF Generation - Use reportlab instead of xhtml2pdf
 reportlab==4.0.9
 
-# RTL Support - Git version (Pure Python)
-git+https://github.com/mkrogemann/python-bidi.git@master
+arabic-reshaper==3.0.0
+python-bidi @ https://github.com/mkrogemann/python-bidi/archive/refs/heads/master.zip
 
 # Extensions
 django-extensions==4.1
