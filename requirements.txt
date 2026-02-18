@@ -1,7 +1,9 @@
 # Core Django
 Django==4.2.11
 gunicorn==21.2.0
-psycopg-binary==3.2.13  # Latest version with Python 3.14 support
+# Replace the current psycopg line with both packages:
+psycopg==3.1.18
+psycopg-binary==3.1.18 # Latest version with Python 3.14 support
 dj-database-url==2.1.0
 python-dotenv==1.0.0
 whitenoise==6.6.0
