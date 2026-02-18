@@ -1,9 +1,7 @@
 # Core Django
 Django==4.2.11
 gunicorn==21.2.0
-# With this:
-psycopg==3.1.18
-psycopg-binary==3.1.18
+psycopg-binary==3.2.13  # Latest version with Python 3.14 support
 dj-database-url==2.1.0
 python-dotenv==1.0.0
 whitenoise==6.6.0
@@ -19,6 +17,7 @@ redis==5.0.1
 
 # API & HTTP
 requests==2.31.0
+aiohttp==3.9.5
 django-cors-headers==4.3.1
 
 # File Handling
@@ -26,21 +25,20 @@ Pillow==12.1.0
 django-import-export==4.4.0
 openpyxl==3.1.2
 
-# PDF Generation - Use reportlab instead of xhtml2pdf
+# PDF Generation
 reportlab==4.0.9
 
+# RTL Support
 arabic-reshaper==3.0.0
-
 
 # Extensions
 django-extensions==4.1
 django-guardian==3.2.0
 
-# Cryptography - Version without Rust
+# Cryptography
 cryptography==41.0.7
 
-# Your other packages
-aiohttp==3.9.5  # Newer version with better Python 3.14 support
+# Dependencies
 certifi==2024.12.14
 charset-normalizer==3.3.2
 idna==3.7
