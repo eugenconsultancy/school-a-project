@@ -38,7 +38,7 @@ django-guardian==3.2.0
 cryptography==41.0.7
 
 # Your other packages
-aiohttp==3.8.6  # Older stable version
+aiohttp==3.9.5  # Newer version with better Python 3.14 support
 certifi==2024.12.14
 charset-normalizer==3.3.2
 idna==3.7
