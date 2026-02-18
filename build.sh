@@ -1,29 +1,26 @@
 #!/usr/bin/env bash
+# Exit on error
 set -o errexit
 
-echo "Starting build..."
+# Install system dependencies required for psycopg2
+apt-get update
+apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    python3-dev
+apt-get clean
+rm -rf /var/lib/apt/lists/*
 
-# Print versions for debugging
-python --version
-pip --version
+# Upgrade pip
+pip install --upgrade pip
 
-# Upgrade pip and build tools
-pip install --upgrade pip setuptools wheel
-
-# Install system dependencies if needed (uncomment if required)
-# apt-get update && apt-get install -y --no-install-recommends \
-#     build-essential \
-#     libpq-dev \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies with verbose output
-pip install -v -r requirements.txt
+# Install Python dependencies
+pip install -r requirements.txt
 
 # Collect static files
 python manage.py collectstatic --no-input
 
-# Run migrations
+# Apply database migrations
 python manage.py migrate
 
 echo "✅ Build completed successfully!"
