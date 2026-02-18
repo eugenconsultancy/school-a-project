@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Exit on error
 set -o errexit
 
-# Install system dependencies required for psycopg2
+# Install system dependencies
 apt-get update
 apt-get install -y --no-install-recommends \
     gcc \
@@ -22,5 +21,12 @@ python manage.py collectstatic --no-input
 
 # Apply database migrations
 python manage.py migrate
+
+# Create superuser if requested
+if [[ $CREATE_SUPERUSER ]];
+then
+  python manage.py createsuperuser --no-input
+  echo "✅ Superuser created successfully"
+fi
 
 echo "✅ Build completed successfully!"
