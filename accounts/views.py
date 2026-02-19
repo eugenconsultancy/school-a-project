@@ -1,3 +1,4 @@
+# C:\Users\GATARA-BJTU\school_a_project\accounts\views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -8,6 +9,60 @@ from marks.models import Mark
 from students.models import Student
 from teachers.models import Teacher
 
+def login_view(request):
+    """Handle user login"""
+    # If user is already logged in, redirect to dashboard
+    if request.user.is_authenticated:
+        # Redirect based on user role for better UX
+        if request.user.is_admin():
+            messages.info(request, 'Welcome back, Administrator!')
+        elif request.user.is_teacher():
+            messages.info(request, 'Welcome back, Teacher!')
+        elif request.user.is_student():
+            messages.info(request, 'Welcome back, Student!')
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    
+                    # Custom welcome messages based on role
+                    if user.is_admin():
+                        messages.success(request, f'Welcome Administrator {user.username}!')
+                    elif user.is_teacher():
+                        messages.success(request, f'Welcome Teacher {user.username}!')
+                    elif user.is_student():
+                        messages.success(request, f'Welcome Student {user.username}!')
+                    else:
+                        messages.success(request, f'Welcome back, {user.username}!')
+                    
+                    return redirect('dashboard')
+                else:
+                    messages.error(request, 'Your account is inactive. Please contact administration.')
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = LoginForm()
+    
+    return render(request, 'accounts/login.html', {'form': form})
+
+@login_required
+def logout_view(request):
+    """Handle user logout"""
+    username = request.user.username
+    logout(request)
+    messages.info(request, f'Goodbye {username}! You have been logged out successfully.')
+    return redirect('login')
+
 @login_required
 def dashboard(request):
     """Main dashboard view - shows different content based on user role"""
@@ -16,7 +71,6 @@ def dashboard(request):
     # Get unread notifications count with error handling
     unread_count = 0
     try:
-        from school_messages.models import Notification
         unread_count = Notification.objects.filter(user=user, is_read=False).count()
     except Exception as e:
         print(f"Notification error: {e}")  # This will log to Render console
@@ -96,7 +150,6 @@ def dashboard(request):
                 
                 # Get academic performance data
                 try:
-                    from marks.models import Mark
                     marks = Mark.objects.filter(student=student_profile)
                     
                     if marks.exists():
