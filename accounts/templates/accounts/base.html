@@ -848,7 +848,10 @@
                         <span class="welcome-text">
                             <i class="fas fa-user-circle"></i>
                             <span class="d-none d-md-inline">{{ user.username|truncatechars:12 }}</span>
-                            <small class="d-none d-lg-inline" style="font-size: 0.85rem;">({{ user.get_role_display }})</small>
+                            <!-- FIXED: Added fallback for role display -->
+                            <small class="d-none d-lg-inline" style="font-size: 0.85rem;">
+                                ({{ user.get_role_display|default:user.role|title }})
+                            </small>
                         </span>
                     </div>
                     
