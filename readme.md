@@ -763,3 +763,100 @@ Integrations to add:
 8. **Document everything:** Especially custom business logic
 
 This system is production-ready with the current features and can scale to support thousands of users with proper infrastructure planning. The modular design allows for easy addition of new features and integration with external systems.
+
+
+from accounts.models import User
+from students.models import Student
+from marks.models import Subject
+import random
+
+def create_student(first_name, last_name, grade, section):
+    """Helper function to create a student with auto-generated password"""
+    
+    # Generate unique username
+    base_username = f"{first_name.lower()}.{last_name.lower()}"
+    username = base_username
+    counter = 1
+    while User.objects.filter(username=username).exists():
+        username = f"{base_username}{counter}"
+        counter += 1
+    
+    # Generate random 8-character password (matches your generate_password(8))
+    import random
+    import string
+    password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+    
+    # Create User
+    user = User.objects.create_user(
+        username=username,
+        email=f"{username}@student.school.com",
+        password=password,
+        first_name=first_name,
+        last_name=last_name,
+        role='student'
+    )
+    print(f"✅ Created user: {user.username}")
+    
+    # Generate admission number
+    year = "2026"
+    admission_number = f"STU{year}{random.randint(1000, 9999)}"
+    
+    # Get some subjects (optional - remove if you don't have subjects yet)
+    subjects = Subject.objects.all()[:2]
+    
+    # Create Student
+    student = Student.objects.create(
+        user=user,
+        admission_number=admission_number,
+        grade=grade,
+        section=section,
+        date_of_birth=f"200{random.randint(8, 9)}-0{random.randint(1, 2)}-{random.randint(10, 28)}",
+        address=f"{random.randint(1, 100)} School Road, Nairobi",
+        phone=f"+2547{random.randint(10000000, 99999999)}",
+        parent_name=f"{random.choice(['John', 'Mary', 'Peter', 'Ann'])} {last_name}",
+        parent_phone=f"+2547{random.randint(10000000, 99999999)}"
+    )
+    
+    # Add subjects if they exist
+    if subjects.exists():
+        student.subjects.set(subjects)
+    
+    return student, password
+
+# Create 2 students
+print("🎓 CREATING STUDENT PROFILES")
+print("=" * 50)
+
+# Student 1
+student1, password1 = create_student(
+    first_name="James",
+    last_name="Otieno",
+    grade="Form 1",
+    section="East"
+)
+
+print(f"\n📋 STUDENT 1 DETAILS:")
+print(f"   Name: {student1.user.get_full_name()}")
+print(f"   Username: {student1.user.username}")
+print(f"   Password: {password1}")
+print(f"   Admission: {student1.admission_number}")
+print(f"   Class: {student1.grade} {student1.section}")
+
+# Student 2
+student2, password2 = create_student(
+    first_name="Aisha",
+    last_name="Mwangi",
+    grade="Form 2",
+    section="West"
+)
+
+print(f"\n📋 STUDENT 2 DETAILS:")
+print(f"   Name: {student2.user.get_full_name()}")
+print(f"   Username: {student2.user.username}")
+print(f"   Password: {password2}")
+print(f"   Admission: {student2.admission_number}")
+print(f"   Class: {student2.grade} {student2.section}")
+
+print("\n" + "=" * 50)
+print("✅ Both students created successfully!")
+print("🔑 SAVE THESE PASSWORDS - They won't be shown again!")
